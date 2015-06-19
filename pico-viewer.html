@@ -1,0 +1,151 @@
+<!-- <script type="text/javascript" src="bower_components/diya-sdk-ng/dist/diya-sdk.js"></script> -->
+<link rel="import" href="bower_components/paper-button/paper-button.html">
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/core-icons/core-icons.html">
+
+<link rel="import" href="bower_components/diya-chooser/diya-chooser-dialog.html">
+
+<polymer-element name="pico-viewer" attributes="selector">
+	<template>
+		<style>
+			:host{
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				/*flex-wrap: wrap;*/
+				height: 100%;
+				width: 100%;
+				}
+
+			#display{
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				height: 100%;
+				width: 100%;
+			}
+
+			#videoBloc{
+				height: 100%;
+				width: 100%;
+			}
+			#imageBloc{
+				height: 100%;
+				width: 100%;
+
+			}
+
+		</style>
+
+		<diya-chooser-dialog selector="{{selector}}"></diya-chooser-dialog>
+
+		<div id="display">
+			<template if="{{img}}">
+				<figure id="imageBloc" >
+					<img width="100%" height="100%"src="{{imageSrc}}"/>
+				</figure>
+			</template>
+			<template if="{{vd}}">
+				<figure id="videoBloc">
+					<video id="vid" controls loop width="100%" height= "100%">
+						<source src="{{videoSrc}}" type="video/mp4">
+					</video>
+				</figure>
+			</template>
+		</div>
+	</template>
+	<script>
+
+		Polymer({
+			ready: function(){
+
+				var that = this;
+				this.status = '';
+				this.files = [];
+				this.imageSrc = '';
+				this.videoSrc = '';
+				this.img = false;
+				this.vd = false;
+				// this.other;
+				// this.$.vid;
+
+				//connexion
+
+			},
+
+			selectorChanged: function(){
+				if(this.selector){
+
+				}
+
+
+				this.listenViewers();
+			},
+
+			setImage: function(file){
+				this.imageSrc = "http://localhost:9000/" + file;
+			},
+
+			setVideo: function(file){
+				var that = this;
+
+				this.videoSrc = "http://localhost:9000/" + file;
+				console.log("setVideo");
+
+				setTimeout(function(){
+
+					console.log(that.$);
+					video = that.shadowRoot.querySelector('#vid');
+
+					if(!video) return ;
+
+					video.load();
+					video.play();
+
+				}, 500);
+			},
+
+			listenViewers: function(){
+				var that = this;
+
+				d1(this.selector).listenViewers(function(peerId, err, data){
+
+					var extension = data.file.split(".").pop();
+					extension = extension.toLowerCase();
+					switch (extension){
+						case "img":
+						case "jpg":
+						case "png":
+						case "jpeg":
+							that.setImage(data.file);
+							that.vd = false;
+							that.img = true;
+							console.log("Image"); break;
+
+						case "mp4":
+						case "avi":
+						case "mov":
+							that.setVideo(data.file);
+							that.vd = true;
+							that.img = false;
+							console.log("Video"); break;
+
+						case "pdf": console.log("Pdf"); break;
+
+						//case "html": console.log("Page web"); break;
+
+
+						default: console.log("...."); other = true; break;
+					}
+
+					that.status = data.file;
+
+					console.log("data: " + data.file);
+					console.log("ext: " + extension);
+					console.log("_________________________");
+				});
+			},
+
+		});
+	</script>
+</polymer-element>
