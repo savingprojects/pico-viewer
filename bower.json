@@ -1,7 +1,7 @@
 {
-  "name": "explorer",
-  "version": "0.0.0",
-  "license": "MIT",
+  "name": "pico-viewer",
+  "version": "0.8.0",
+  "license": "LGPL v3.0",
   "ignore": [
     "**/.*",
     "node_modules",
