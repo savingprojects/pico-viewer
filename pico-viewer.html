@@ -3,7 +3,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../core-icons/core-icons.html">
 
-<polymer-element name="pico-viewer" attributes="selector">
+<polymer-element name="pico-viewer" attributes="selector httpServer">
 	<template>
 
 		<style>
@@ -81,13 +81,13 @@
 			},
 
 			setImage: function(file){
-				this.imageSrc = "http://localhost:9000/" + file;
+				this.imageSrc = this.httpServer + file;
 			},
 
 			setVideo: function(file){
 				var that = this;
 
-				this.videoSrc = "http://localhost:9000/" + file;
+				this.videoSrc = this.httpServer + file;
 				console.log("setVideo");
 
 				setTimeout(function(){
