@@ -2,6 +2,7 @@
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../core-icons/core-icons.html">
+<link rel="import" href="/bower_components/display-pdf/display-pdf.html">
 
 <polymer-element name="pico-viewer" attributes="selector httpServer">
 	<template>
@@ -50,6 +51,11 @@
 					</video>
 				</div>
 			</template>
+			<template if="{{pdf}}">
+				<figure id="pdfBloc" >
+					<display-pdf width="100%" height="100%"src="{{pdfSrc}}"></display-pdf>
+				</figure>
+			</template>
 		</div>
 	</template>
 	<script>
@@ -64,6 +70,7 @@
 				this.videoSrc = '';
 				this.img = false;
 				this.vd = false;
+				this.pdf = false;
 				// this.other;
 				// this.$.vid;
 
@@ -78,14 +85,17 @@
 
 
 				this.listenViewers();
+				// this.stop();
 			},
 
 			setImage: function(file){
+				this.httpServer = 'http://localhost:9001/';
 				this.imageSrc = this.httpServer + file;
 			},
 
 			setVideo: function(file){
 				var that = this;
+				this.httpServer = 'http://localhost:9001/';
 
 				this.videoSrc = this.httpServer + file;
 				console.log("setVideo");
@@ -103,11 +113,18 @@
 				}, 500);
 			},
 
+			setPdf: function(file){
+				this.httpServer = 'http://localhost:9001/';
+				this.pdfSrc = this.httpServer + file;
+			},
+
 			listenViewers: function(){
 				var that = this;
 
 				d1(this.selector).listenViewers(function(peerId, err, data){
-
+					console.log(data);
+					console.log(peerId);
+					console.log(err);
 					var extension = data.file.split(".").pop();
 					extension = extension.toLowerCase();
 					switch (extension){
@@ -116,8 +133,9 @@
 						case "png":
 						case "jpeg":
 							that.setImage(data.file);
-							that.vd = false;
 							that.img = true;
+							that.vd = false;
+							that.pdf = false;
 							console.log("Image"); break;
 
 						case "mp4":
@@ -127,9 +145,15 @@
 							that.setVideo(data.file);
 							that.vd = true;
 							that.img = false;
+							that.pdf = false;
 							console.log("Video"); break;
 
-						case "pdf": console.log("Pdf"); break;
+						case "pdf":
+							that.setPdf(data.file);
+							that.pdf = true;
+							that.img = false;
+							that.vd = false;
+						 	console.log("Pdf"); break;
 
 						//case "html": console.log("Page web"); break;
 
@@ -145,6 +169,16 @@
 				});
 			},
 
+			// stop: function(){
+			// 	d1(this.selector).stop(function(peerId, err, data){
+			// 		that.vd = false;
+			// 		that.img = true;
+			// 		console.log("uggukyhgkj1");
+			// 		that.setImage(data.file);
+			// 		console.log("gfjhgj");
+			// 	});
+			// },
 		});
+
 	</script>
 </polymer-element>
