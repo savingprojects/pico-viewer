@@ -1,8 +1,8 @@
-<!-- <script type="text/javascript" src="bower_components/diya-sdk-ng/dist/diya-sdk.js"></script> -->
+<script type="text/javascript" src="../diya-sdk/dist/diya-sdk.js"></script>
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../core-icons/core-icons.html">
-<link rel="import" href="/bower_components/display-pdf/display-pdf.html">
+<link rel="import" href="../display-pdf/display-pdf.html">
 
 <polymer-element name="pico-viewer" attributes="selector httpServer">
 	<template>
@@ -33,7 +33,14 @@
 				margin: 0px;
 				height: 100%;
 				width: 100%;
-
+			}
+			#pdfBloc{
+				margin: 0px;
+				height: 100%;
+				width: 100%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
 			}
 
 		</style>
@@ -51,9 +58,9 @@
 					</video>
 				</div>
 			</template>
-			<template if="{{pdf}}">
+			<template if="{{pdf}}" selector="{{selector}}">
 				<figure id="pdfBloc" >
-					<display-pdf width="100%" height="100%"src="{{pdfSrc}}"></display-pdf>
+					<display-pdf width="100%" height="100%" source="{{pdfSrc}}"></display-pdf>
 				</figure>
 			</template>
 		</div>
@@ -68,6 +75,7 @@
 				this.files = [];
 				this.imageSrc = '';
 				this.videoSrc = '';
+				this.pdfSrc = '';
 				this.img = false;
 				this.vd = false;
 				this.pdf = false;
@@ -79,7 +87,7 @@
 			},
 
 			selectorChanged: function(){
-				if(this.selector){
+				if(this.selector){console.log(this.selector);
 
 				}
 
@@ -89,13 +97,13 @@
 			},
 
 			setImage: function(file){
-				this.httpServer = 'http://localhost:9001/';
+				this.httpServer = 'http://localhost:9001/pdf.js/www/';
 				this.imageSrc = this.httpServer + file;
 			},
 
 			setVideo: function(file){
 				var that = this;
-				this.httpServer = 'http://localhost:9001/';
+				this.httpServer = 'http://localhost:9001/pdf.js/www/';
 
 				this.videoSrc = this.httpServer + file;
 				console.log("setVideo");
@@ -114,7 +122,8 @@
 			},
 
 			setPdf: function(file){
-				this.httpServer = 'http://localhost:9001/';
+				// var file = 'compressed.tracemonkey-pldi-09.pdf';
+				this.httpServer = 'http://localhost:9001/pdf.js/www/';
 				this.pdfSrc = this.httpServer + file;
 			},
 
@@ -150,6 +159,7 @@
 
 						case "pdf":
 							that.setPdf(data.file);
+							// that.setPdf();
 							that.pdf = true;
 							that.img = false;
 							that.vd = false;
