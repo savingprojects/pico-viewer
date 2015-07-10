@@ -43,6 +43,22 @@
 				/*align-items: center;*/
 			}
 
+			paper-button{
+				color: white;
+			}
+
+			.evenPage{
+				display: flex;
+				height: 80%;
+				width: 70%;
+			}
+
+			.oddPage{
+				display: block;
+				height: 80%;
+				width: 70%;
+			}
+
 		</style>
 
 		<div id="display">
@@ -60,7 +76,14 @@
 			</template>
 			<template if="{{pdf}}" selector="{{selector}}">
 				<figure id="pdfBloc" >
-					<display-pdf width="100%" height="100%" source="{{pdfSrc}}"></display-pdf>
+					<template if="{{mobile}}">
+						<display-pdf width="100%" height="100%" source="{{pdfSrc}}"></display-pdf>
+					</template>
+					<template if="{{!mobile}}">
+						<paper-button on-tap="{{prev}}">prev</paper-button>
+						<paper-button on-tap="{{next}}">next</paper-button>
+						<embed class="{{page%2===0? 'evenPage':'oddPage'}}" width="100%" height="100%" src="{{dispPage}}"></embed>
+					</template>
 				</figure>
 			</template>
 		</div>
@@ -79,6 +102,12 @@
 				this.img = false;
 				this.vd = false;
 				this.pdf = false;
+				this.page = 1;
+				this.nbPage = 14;
+				// this.dispPage = "#page=" + JSON.stringify(this.page);
+				this.mobile = this.isMobile();
+
+
 				// this.other;
 				// this.$.vid;
 
@@ -86,8 +115,16 @@
 
 			},
 
+			isMobile:function ()
+			{
+				console.log("Mobile:");
+				console.log(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+				return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+		    },
+
 			selectorChanged: function(){
 				if(this.selector){
+
 					console.log(this.selector);
 				}
 
@@ -123,8 +160,9 @@
 
 			setPdf: function(file){
 				// var file = 'compressed.tracemonkey-pldi-09.pdf';
-				this.httpServer = 'http://localhost:9001/pdf.js/www/';
-				this.pdfSrc = this.httpServer + file;
+				this.httpServer = '/pdf.js/www/';
+				this.pdfSrc = this.httpServer + file ;
+				console.log(this.pdfSrc);
 			},
 
 			listenViewers: function(){
@@ -163,6 +201,8 @@
 							that.pdf = true;
 							that.img = false;
 							that.vd = false;
+							that.page = 1;
+							that.goOnPage(that.page); //if not using library pdf.js
 						 	console.log("Pdf"); break;
 
 						//case "html": console.log("Page web"); break;
@@ -179,13 +219,36 @@
 				});
 			},
 
+			next: function(){
+				if(this.page < this.nbPage){
+					this.page+=1;
+					this.goOnPage(this.page);
+					// this.setPdf(this.dispPage);
+					// this.pdfSrc = this.dispPage;
+				}
+			},
+
+			prev: function(){
+				if(this.page > 1){
+					this.page-=1;
+					this.goOnPage(this.page);
+				}
+			},
+
+			goOnPage: function(p){
+				// this.listenViewers();
+				this.dispPage = this.pdfSrc + "#page=" + p;
+				console.log(this.dispPage);
+			},
+
+
 			// stop: function(){
 			// 	d1(this.selector).stop(function(peerId, err, data){
 			// 		that.vd = false;
 			// 		that.img = true;
-			// 		console.log("uggukyhgkj1");
+			// 		console.log("________");
 			// 		that.setImage(data.file);
-			// 		console.log("gfjhgj");
+			// 		console.log("_________");
 			// 	});
 			// },
 		});
