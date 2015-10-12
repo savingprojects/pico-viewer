@@ -10,8 +10,7 @@
     "tests"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#^0.5",
-    "paper-button": "Polymer/paper-button#^0.5",
-    "diya-sdk": "partnering/diya-sdk"
+    "polymer": "Polymer/polymer#~1.1.5",
+    "paper-button": "PolymerElements/paper-button#~1.0.8"
   }
 }
